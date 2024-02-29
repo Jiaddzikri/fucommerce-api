@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string("name");
             $table->timestamp("updated_at")->nullable();
             $table->timestamp("created_at")->nullable();
+
+            $table->foreign("sub_category_2_id")->references("id")->on("sub_categories_2")->onDelete("cascade")->onUpdate("cascade");
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sub_category_3');
+        Schema::dropIfExists('sub_categories_3');
     }
 };

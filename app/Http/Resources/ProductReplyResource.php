@@ -4,9 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ProductsResource extends ResourceCollection
+class ProductReplyResource extends ResourceCollection
 {
-    public $preserveKeys = true;
     /**
      * Transform the resource collection into an array.
      *
@@ -16,7 +15,7 @@ class ProductsResource extends ResourceCollection
     public function toArray($request)
     {
         return [
-            "message" => "Success",
+            "message" => "success",
             "data" => $this->collection
         ];
     }

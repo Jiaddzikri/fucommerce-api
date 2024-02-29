@@ -13,7 +13,7 @@ class Products extends Model
 
     protected $table = "products";
     protected $primaryKey = "id";
-    public $fillable = ["id", "category_id", "sub_category_1_id", "sub_category_2_id", "sub_category_3_id", "sub_category_4_id", "user_id", "seller_id", "inventory_id", "discount_id", "name",  "price", "description"];
+    public $fillable = ["id", "category_id", "sub_category_1_id", "sub_category_2_id", "sub_category_3_id", "sub_category_4_id", "user_id", "seller_id", "inventory_id", "discount_id", "name", "slug",  "price", "description"];
     public $timestamp = true;
     public $incrementing = false;
     protected $keyType = "string";

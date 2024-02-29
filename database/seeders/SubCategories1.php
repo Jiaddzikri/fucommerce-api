@@ -17,9 +17,15 @@ class SubCategories1 extends Seeder
     {
         DB::table("sub_categories_1")
             ->insert([
-                "id" => "SUBCAT03",
+                "id" => "SUBCAT01",
                 "category_id" => "CAT01",
-                "name" => "dress"
+                "name" => "laptop"
+            ]);
+        DB::table("sub_categories_1")
+            ->insert([
+                "id" => "SUBCAT02",
+                "category_id" => "CAT02",
+                "name" => "handphone"
             ]);
     }
 }

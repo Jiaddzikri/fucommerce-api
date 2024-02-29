@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string("inventory_id", 20)->nullable();
             $table->string("discount_id", 20)->nullable();
             $table->string("name", 50);
+            $table->string("slug", 100);
             $table->bigInteger("price");
             $table->longText("description");
             $table->timestamp("created_at")->nullable();

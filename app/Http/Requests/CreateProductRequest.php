@@ -26,13 +26,17 @@ class CreateProductRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required|max:50",
+            "category" => "required",
+            "sub_category_1" => "required",
+            "sub_category_2" => "required",
+            "sub_category_3" => "required",
+            "name" => "required|max:70",
             "price" => "required",
             "description" => "required",
-            "image_1" => "required|mimes:jpg,png,jpeg,webp|image|max:4096",
-            "image_2" => "required|mimes:jpg,png,jpeg,webp|image|max:4096",
-            "image_3" => "required|mimes:jpg,png,jpeg,webp|image|max:4096",
-            "image_4" => "required|mimes:jpg,png,jpeg,webp|image|max:4096",
+            "image_1" => "required|file|mimes:jpg,png,jpeg,webp|image|max:4096",
+            "image_2" => "required|file||mimes:jpg,png,jpeg,webp|image|max:4096",
+            "image_3" => "required|file|mimes:jpg,png,jpeg,webp|image|max:4096",
+            "image_4" => "required|file|mimes:jpg,png,jpeg,webp|image|max:4096",
         ];
     }
 
@@ -48,10 +52,10 @@ class CreateProductRequest extends FormRequest
     public function messages(): array
     {
         return [
-            "category_id.required" => "Please fill the category!",
-            "sub_category_1_id.required" => "Please fill the category!",
-            "sub_category_2_id.required" => "Please fill the category!",
-            "sub_category_3_id.required" => "Please fill the category!",
+            "category.required" => "Please fill the category!",
+            "sub_category_1.required" => "Please fill the category!",
+            "sub_category_2.required" => "Please fill the category!",
+            "sub_category_3.required" => "Please fill the category!",
             "name.required" => "Please fill the name!",
             "price.required" => "Please fill the price!",
             "description.required" => "Please fill the description",

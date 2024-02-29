@@ -18,7 +18,12 @@ class CategoriesSeeder extends Seeder
         DB::table("categories")
             ->insert([
                 "id" => "CAT01",
-                "name" => "pakaian",
+                "name" => "komputer & latop ",
+            ]);
+        DB::table("categories")
+            ->insert([
+                "id" => "CAT02",
+                "name" => "Handphone & tablet ",
             ]);
     }
 }

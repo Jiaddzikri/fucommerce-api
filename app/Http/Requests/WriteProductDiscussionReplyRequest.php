@@ -6,12 +6,12 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class WriteProductDiscussionReplyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @return bool
+     * @return bool 
      */
     public function authorize()
     {
@@ -26,8 +26,10 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => "required|email",
-            "password" => "required"
+            "product_id" => "required",
+            "discussion_id" => "required",
+            "receiver_id" => "required",
+            "content" => "required"
         ];
     }
 
@@ -42,9 +44,10 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
-            "email.required" => "Please fill the email!",
-            "email.email" => "Please fill correct email!",
-            "password.required" => "Please fill the password!"
+            "product_id.required" => "Need Product Id",
+            "discussion_id.required" => "Need Discussion Id",
+            "receiver_id.required" => "Need receiver id",
+            "content.required" => "Message cannot empty!"
         ];
     }
 }

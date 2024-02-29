@@ -48,20 +48,32 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($param)
+    public function show(Request $request)
     {
-        $category = new CategoryResource(
-            $this->category::leftJoin("sub_categories_1", "categories.id", "=", "sub_categories_1.category_id")
-                ->leftJoin("sub_categories_2", "sub_categories_1.id", "=", "sub_categories_2.sub_category_1_id")
-                ->leftJoin("sub_categories_3", "sub_categories_2.id", "=", "sub_categories_3.sub_category_2_id")
-                ->select("categories.id AS category_id", "categories.name AS category_name", "sub_categories_1.id AS sub_category_1_id", "sub_categories_1.name AS sub_category_1_name", "sub_categories_2.id AS sub_category_2_id", "sub_categories_2.name AS sub_category_2_name", "sub_categories_3.id AS sub_category_3_id", "sub_categories_3.name AS sub_category_3_name")
-                ->where("categories.name", "like", "%" . $param . "%")
-                ->orWhere("sub_categories_1.name", "like", "%" . $param . "%")
-                ->orWhere("sub_categories_2.name", "like    ", "%" . $param . "%")
-                ->orWhere("sub_categories_3.name", "like", "%" . $param . "%")
-                ->get()
-        );
+        $filterParam = implode(" ", explode("-", $request->get("key")));
+        $model = $this->category
+            ->leftJoin("sub_categories_1", "categories.id", "=", "sub_categories_1.category_id")
+            ->leftJoin("sub_categories_2", "sub_categories_1.id", "=", "sub_categories_2.sub_category_1_id")
+            ->leftJoin("sub_categories_3", "sub_categories_3.sub_category_2_id",  "=", "sub_categories_2.id",)
+            ->select([
+                "categories.id AS category_id",
+                "categories.name AS category_name",
+                "sub_categories_1.id AS sub_category_1_id",
+                "sub_categories_1.name AS sub_category_1_name",
+                "sub_categories_2.id AS sub_category_2_id",
+                "sub_categories_2.name AS sub_category_2_name",
+                "sub_categories_3.id AS sub_category_3_id",
+                "sub_categories_3.name AS sub_category_3_name"
+            ])
+            ->where(function ($query) use ($filterParam) {
+                $query->where("categories.name", "like", "%" . $filterParam . "%")
+                    ->orWhere("sub_categories_1.name", "like", "%" . $filterParam . "%")
+                    ->orWhere("sub_categories_2.name", "like", "%" . $filterParam . "%")
+                    ->orWhere("sub_categories_3.name", "like", "%" . $filterParam . "%");
+            })
+            ->get();
 
+        $category = new CategoryResource($model);
 
         if (sizeof($category) == 0) {
             return response()->json([

@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
+use App\Models\ProductDiscussion;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,17 +47,33 @@ Route::controller(SessionController::class)->group(function () {
 // product controller
 Route::controller(ProductController::class)->group(function () {
     Route::get("/products", "index");
-    Route::get("/products/{id}", "show");
-    Route::get("/products/search/{param}", "search");
-    Route::post("/products", "create");
-    Route::put("/products/{id}", "update");
-    Route::delete("/products/{id}", "destroy");
+    Route::get("/product/{id}", "show");
+    Route::get("/product", "search");
+    Route::get("/product/{store}/{slug}", "showProductBySlug");
+    Route::post("/product", "create");
+    Route::put("/product/{id}", "update");
+    Route::delete("/product/{id}", "destroy");
 });
 
 Route::controller(SellerController::class)->group(function () {
     Route::post("/seller", "store");
+    Route::get("/seller/products", "productsList");
 });
 
 Route::controller(CategoryController::class)->group(function () {
-    Route::get("/categories/{param}", "show");
+    Route::get("/categories", "show");
+    Route::get("/testing/{param}", "testingSimilarity");
+});
+
+Route::controller(StoreController::class)->group(function () {
+    Route::get("/store/{store_domain}", "show");
+    Route::get("/store/{store_domain}/products", "storeProducts");
+    Route::get("/store/{store_domain}/reviews", "storeReviews");
+});
+
+Route::controller(DiscussionController::class)->group(function () {
+    Route::post("/discussions/product", "writeProductDiscussion");
+    Route::get("/discussions/product/{productSlug}", "showProductDiscussions");
+    Route::post("/discussion/replies/product", "writeReplyDiscussion");
+    Route::get("/discussions/replies/product/{productSlug}", "showProductReplies");
 });

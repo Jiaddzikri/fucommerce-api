@@ -11,10 +11,12 @@ use App\Models\Products;
 use App\Response\FindSessionResponse;
 use App\Services\SessionService;
 use Exception;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -38,8 +40,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = $this->products::leftJoin("product_images", "products.id", "=", "product_images.product_id")
-            ->select("products.id", "products.name", "products.price", "products.description", "products.created_at", "products.updated_at", "product_images.main_image_name", "product_images.main_image_path", "product_images.second_image_name", "product_images.second_image_path", "product_images.third_image_name", "product_images.third_image_path", "product_images.fourth_image_name", "product_images.fourth_image_path")
+        $data = $this->products->leftJoin("users", "users.id", "=", "products.user_id")->leftJoin("product_images", "products.id", "=", "product_images.product_id")
+            ->select(["users.store_domain", "products.id", "products.name", "products.slug", "products.price", "products.description", "products.created_at", "products.updated_at", "product_images.main_image_name", "product_images.main_image_path", "product_images.second_image_name", "product_images.second_image_path", "product_images.third_image_name", "product_images.third_image_path", "product_images.fourth_image_name", "product_images.fourth_image_path"])
             ->get();
         return new ProductsResource($data);
     }
@@ -65,11 +67,12 @@ class ProductController extends Controller
                 $insertProduct = $this->products;
                 $insertProduct->id = $generateProductId;
                 $insertProduct->user_id = $validateRole->user_id ?? null;
-                $insertProduct->category_id =  $validated["category_id"] ?? null;
-                $insertProduct->sub_category_1_id = $validated["sub_category_1_id"] ?? null;
-                $insertProduct->sub_category_2_id = $validated["sub_category_2_id"] ?? null;
-                $insertProduct->sub_category_3_id = $validated["sub_category_3_id"] ?? null;
+                $insertProduct->category_id =  $validated["category"] ?? null;
+                $insertProduct->sub_category_1_id = $validated["sub_category_1"] ?? null;
+                $insertProduct->sub_category_2_id = $validated["sub_category_2"] ?? null;
+                $insertProduct->sub_category_3_id = $validated["sub_category_3"] ?? null;
                 $insertProduct->name = $validated["name"] ?? null;
+                $insertProduct->slug = strtolower(preg_replace("/[^A-Za-z0-9\-]/", "-", $validated["name"])) ?? null;
                 $insertProduct->price = (int) $validated["price"] ?? null;
                 $insertProduct->description = $validated["description"] ?? null;
                 $insertProduct->save();
@@ -78,13 +81,13 @@ class ProductController extends Controller
                 $insertProductImage->id = $generateProductImageId;
                 $insertProductImage->product_id = $generateProductId;
                 $insertProductImage->main_image_name = $image1HashName;
-                $insertProductImage->main_image_path = "/storage/images/" . $image1HashName;
+                $insertProductImage->main_image_path = "storage/images/" . $image1HashName;
                 $insertProductImage->second_image_name = $image2HashName;
-                $insertProductImage->second_image_path = "/storage/images/" . $image2HashName;
+                $insertProductImage->second_image_path = "storage/images/" . $image2HashName;
                 $insertProductImage->third_image_name = $image3HashName;
-                $insertProductImage->third_image_path = "/storage/images/" .  $image3HashName;
+                $insertProductImage->third_image_path = "storage/images/" .  $image3HashName;
                 $insertProductImage->fourth_image_name = $image4HashName;
-                $insertProductImage->fourth_image_path = "/storage/images/" . $image4HashName;
+                $insertProductImage->fourth_image_path = "storage/images/" . $image4HashName;
                 $insertProductImage->save();
 
                 $validated["image_1"]->storePubliclyAs("images", $image1HashName, "public");
@@ -143,20 +146,32 @@ class ProductController extends Controller
         return $product;
     }
 
-    public function search($param): JsonResponse|ProductsResource
+    public function search(Request $request): JsonResponse|ProductsResource
     {
-        $products = new ProductsResource($this->products::leftJoin("categories", "products.category_id", "=", "categories.id")
-            ->leftJoin("sub_categories_1", "products.sub_category_1_id", "=", "sub_categories_1.id")
-            ->leftJoin("sub_categories_2", "products.sub_category_2_id", "=", "sub_categories_2.id")
-            ->leftJoin("sub_categories_3", "products.sub_category_3_id", "=", "sub_categories_3.id")
+        $keyParam = $request->get("key");
+        $minPrice = $request->get("pmin") ?? 0;
+        $maxPrice = $request->get("pmax") ?? 100000000;
+        $filter = $request->get("filter");
+
+        $query = $this->products::select("products.name as product_name", "products.price as product_price", "product_images.main_image_name")
             ->leftJoin("product_images", "products.id", "=", "product_images.product_id")
-            ->select("products.name", "products.price", "product_images.main_image_name")
-            ->where("products.name", "like", "%" . $param . "%")
-            ->orWhere("categories.name", "like", "%" . $param . "%")
-            ->orWhere("sub_categories_1.name", "like", "%" . $param . "%")
-            ->orWhere("sub_categories_2.name", "like", "%" . $param . "%")
-            ->orWhere("sub_categories_3.name", "like", "%" . $param . "%")
-            ->get());
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('sub_categories_1', 'categories.id', '=', "sub_categories_1.category_id")
+            ->leftJoin('sub_categories_2', 'sub_categories_2.sub_category_1_id', "=", "sub_categories_1.id")
+            ->leftJoin('sub_categories_3', 'sub_categories_3.sub_category_2_id', "=", 'sub_categories_2.id')
+            ->where(function ($query) use ($keyParam) {
+                $query->whereRaw("products.name LIKE ?", ['%' . $keyParam . '%'])
+                    ->orWhereRaw("sub_categories_1.name LIKE ?", ['%' . $keyParam . '%'])
+                    ->orWhereRaw("sub_categories_2.name LIKE ?", ['%' . $keyParam . '%'])
+                    ->orWhereRaw("sub_categories_3.name LIKE ?", ['%' . $keyParam . '%']);
+            })
+            ->where(function ($query) use ($minPrice, $maxPrice) {
+                $query->where('products.price', '>', $minPrice)
+                    ->where('products.price', '<', $maxPrice);
+            })
+            ->get();
+
+        $products = new ProductsResource($query->get());
 
         if (sizeof($products) == 0) {
             return response()->json([
@@ -166,6 +181,26 @@ class ProductController extends Controller
         }
 
         return $products;
+    }
+
+    public function showProductBySlug($store, $slug): JsonResponse|ProductsResource
+    {
+        $query = $this->products->select(["products.id", "products.name", "products.slug", "products.price", "products.description", "products.created_at", "products.updated_at", "product_images.main_image_name", "product_images.main_image_path", "product_images.second_image_name", "product_images.second_image_path", "product_images.third_image_name", "product_images.third_image_path", "product_images.fourth_image_name", "product_images.fourth_image_path"])->leftJoin("users", "users.id", "=", "products.user_id")
+            ->leftJoin("product_images", "products.id", "=", "product_images.product_id")
+            ->where(function ($query) use ($store, $slug) {
+                $query->where("users.store_domain", "=", $store)
+                    ->where("products.slug", "=", $slug);
+            })->get();
+        $product =  new ProductsResource($query);
+
+        if (sizeof($product) == 0) {
+            return response()->json([
+                "message" => "Product not found",
+                "data" =>  null
+            ], 404, ["Content-Type" => "application/json"]);
+        }
+
+        return $product;
     }
 
     /**
@@ -184,8 +219,9 @@ class ProductController extends Controller
         try {
             $this->validatingRole($updateRequest->header("Authorization") ?? "");
             $update = $this->products::find($id);
-            if (is_null($update))
+            if (is_null($update)) {
                 throw new Exception("Product not found", 404);
+            }
 
             DB::transaction(function () use ($validated, $update) {
                 $update->category_id = $validated["category_id"] ?? $update->category;

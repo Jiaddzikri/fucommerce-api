@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Session;
 use App\Models\User;
-use App\Services\SessionService;
 use App\Services\SessionServiceImplementation;
 use Exception;
 use Illuminate\Http\JsonResponse;

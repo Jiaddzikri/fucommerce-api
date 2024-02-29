@@ -18,8 +18,15 @@ class SubCategories3 extends Seeder
         DB::table("sub_categories_3")
             ->insert([
                 "id" => "SUBCAT05",
+                "sub_category_2_id" => "SUBCAT03",
+                "name" => "lenovo legion"
+            ]);
+
+        DB::table("sub_categories_3")
+            ->insert([
+                "id" => "SUBCAT06",
                 "sub_category_2_id" => "SUBCAT04",
-                "name" => "dress merah"
+                "name" => "iphone"
             ]);
     }
 }

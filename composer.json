@@ -12,7 +12,9 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "laravolt/indonesia": "^0.34.0"
+        "laravolt/indonesia": "^0.34.0",
+        "php-ai/php-ml": "^0.10.0",
+        "rubix/ml": "^2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
