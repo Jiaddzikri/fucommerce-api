@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\LoginController;
@@ -48,7 +49,7 @@ Route::controller(SessionController::class)->group(function () {
 Route::controller(ProductController::class)->group(function () {
     Route::get("/products", "index");
     Route::get("/product/{id}", "show");
-    Route::get("/product", "search");
+    Route::get("/products/search", "search");
     Route::get("/product/{store}/{slug}", "showProductBySlug");
     Route::post("/product", "create");
     Route::put("/product/{id}", "update");
@@ -76,4 +77,10 @@ Route::controller(DiscussionController::class)->group(function () {
     Route::get("/discussions/product/{productSlug}", "showProductDiscussions");
     Route::post("/discussion/replies/product", "writeReplyDiscussion");
     Route::get("/discussions/replies/product/{productSlug}", "showProductReplies");
+});
+
+Route::controller(CartController::class)->group(function () {
+    Route::post("/cart", "store");
+    Route::get("/carts", "show");
+    Route::delete("/cart/{id}", "destroy");
 });

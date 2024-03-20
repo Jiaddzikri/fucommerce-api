@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string("payment_id")->nullable();
             $table->timestamp("created_at")->nullable();
             $table->timestamp("updated_at")->nullable();
+
+            $table->foreign("user_id")->references("id")->on("users");
         });
     }
 
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders_detail');
+        Schema::dropIfExists('order_details');
     }
 };

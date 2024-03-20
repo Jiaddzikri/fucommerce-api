@@ -4,9 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ProductsResource extends ResourceCollection
+class CartResource extends ResourceCollection
 {
-    public $preserveKeys = true;
     /**
      * Transform the resource collection into an array.
      *
@@ -15,11 +14,11 @@ class ProductsResource extends ResourceCollection
      */
     public function toArray($request)
     {
-        $collection = $this->collection;
+        $datas = $this->collection;
         return [
-            "message" => "Success",
-            "data" => $collection,
-            "length" => sizeof($collection)
+            "message" => "success",
+            "data" => $datas,
+            "length" => sizeof($datas)
         ];
     }
 }

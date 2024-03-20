@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("id", 20)->primary();
             $table->string("session_id", 20)->nullable();
             $table->string("product_id", 20)->nullable();
+            $table->integer("quantity")->nullable()->default(0);
             $table->timestamp("created_at")->nullable();
             $table->timestamp("updated_at")->nullable();
 

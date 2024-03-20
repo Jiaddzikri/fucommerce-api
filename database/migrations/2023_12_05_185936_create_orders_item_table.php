@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("id")->primary();
             $table->string("order_id")->nullable();
             $table->string("product_id")->nullable();
+            $table->string("note", 100)->nullable();
             $table->integer("quantity")->nullable();
             $table->timestamp("created_at")->nullable();
             $table->timestamp("updated_at")->nullable();
