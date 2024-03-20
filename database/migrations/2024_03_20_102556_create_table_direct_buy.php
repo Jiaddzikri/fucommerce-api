@@ -13,17 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('table_direct_buy', function (Blueprint $table) {
             $table->string("id", 20)->primary();
-            $table->string("session_id", 20)->nullable();
             $table->string("product_id", 20)->nullable();
+            $table->string("session_id", 20)->nullable();
             $table->string("note", 100)->nullable();
             $table->integer("quantity")->nullable()->default(0);
             $table->timestamp("created_at")->nullable();
             $table->timestamp("updated_at")->nullable();
-
-            $table->foreign("session_id")->references("id")->on("sessions");
-            $table->foreign("product_id")->references("id")->on("products");
         });
     }
 
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('table_direct_buy');
     }
 };
