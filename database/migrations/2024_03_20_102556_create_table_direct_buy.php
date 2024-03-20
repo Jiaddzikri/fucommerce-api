@@ -21,6 +21,9 @@ return new class extends Migration
             $table->integer("quantity")->nullable()->default(0);
             $table->timestamp("created_at")->nullable();
             $table->timestamp("updated_at")->nullable();
+
+            $table->foreign("product_id")->references("id")->on("products");
+            $table->foreign("session_id")->references("id")->on("sessions");
         });
     }
 
