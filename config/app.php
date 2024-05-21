@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\OrderServiceProvider;
 use App\Providers\ProductServiceProvider;
 use App\Providers\SellerServiceProvider;
 use App\Providers\SessionServiceProvider;
@@ -203,7 +204,8 @@ return [
         SessionServiceProvider::class,
         UserServiceProvider::class,
         ProductServiceProvider::class,
-        SellerServiceProvider::class
+        SellerServiceProvider::class,
+        OrderServiceProvider::class
 
     ],
 

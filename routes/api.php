@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SellerController;
@@ -83,4 +84,9 @@ Route::controller(CartController::class)->group(function () {
     Route::post("/cart", "store");
     Route::get("/carts", "show");
     Route::delete("/cart/{id}", "destroy");
+});
+
+Route::controller(OrderController::class)->group(function () {
+    Route::post("/order/direct", "directBuy");
+    Route::get("/order/direct", "showDirectBuyData");
 });
